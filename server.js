@@ -15,8 +15,8 @@ mongodb.MongoClient.connect("mongodb://andrewmundy:unreal@ds149551.mlab.com:4955
   }
 
   db = database;
-  users = db.collection("users");
-  photos = db.collection("photos");
+  console.log("Database connection ready");
+
   var server = app.listen(process.env.PORT || 8080, function () {
   var port = server.address().port;
     console.log("App now running on port", port);
@@ -37,6 +37,12 @@ mongodb.MongoClient.connect("mongodb://andrewmundy:unreal@ds149551.mlab.com:4955
 //     console.log('We are live on ' + port);
 //   });
 // })
+
+function handleError(res, reason, message, code) {
+  console.log("ERROR: " + reason);
+  res.status(code || 500).json({"error": message});
+}
+////////
 
 app.get('/users', (req, res) => {
   const id = req.params.id;
@@ -89,9 +95,13 @@ app.post('/photos', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-    const user = { username: req.body.username, avatar: req.body.avatar, description: req.body.description };
+    var user = {
+      username: req.body.username,
+      avatar: req.body.avatar,
+      description: req.body.description
+    };
 
-    db.collection('users').insert(user, (err, result) => {
+    db.collection('users').insertOne(user, (err, result) => {
       if (err) {
         res.send({ 'error': 'An error has occurred' });
       } else {
