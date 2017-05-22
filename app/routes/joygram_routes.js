@@ -42,7 +42,7 @@ app.post('/photos', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-    const user = { username: req.body.username, avatar: req.body. avatar, description: req.body.description };
+    const user = { username: req.body.username, avatar: req.body.avatar, description: req.body.description };
 
     db.collection('users').insert(user, (err, result) => {
       if (err) {

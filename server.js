@@ -1,16 +1,28 @@
-var express        = require('express');
-var MongoClient    = require('mongodb').MongoClient;
-var bodyParser     = require('body-parser');
-var db             = require('./config/db');
-var app            = express();
+var express = require('express');
+var path = require("path");
+var bodyParser = require("body-parser");
+var mongodb = require("mongodb");
+var ObjectID = mongodb.ObjectID;
 
-var port = process.env.PORT || 8000
+var USERS_COLLECTION = "users";
 
-app.use(bodyParser.urlencoded({ extended: true }));
-MongoClient.connect(db.url, (err, database) => {
-  if (err) return console.log(err)
-  require('./app/routes')(app, database);
-  app.listen(port, function() {
-    console.log("App is running on port " + port);
+var app = express();
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.json());
+
+var db
+
+mongodb.MongoClient.connect("mongodb://andrewmundy:unreal@ds149551.mlab.com:49551/joygram_api", function (err, database) {
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  }
+
+  db = database;
+  users = db.collection("users");
+  photos = db.collection("photos");
+  var server = app.listen(process.env.PORT || 8080, function () {
+  var port = server.address().port;
+    console.log("App now running on port", port);
   });
-})
+});
